@@ -24,6 +24,7 @@
     <h1>🎮 제없알 화이팅! 전용 프로그래밍 언어</h1>
     <p>나만의 커스텀 게임 언어로 코딩하고, 아래 버튼을 눌러 게임 결과를 바로 확인해 보세요!</p>
 
+    <!-- 📜 명령어 사전 -->
     <h3>📜 게임 언어 명령어 사전</h3>
     <table>
         <thead>
@@ -47,9 +48,9 @@
 
     <div class="container">
         <h3>1. 게임 스크립트 입력창</h3>
+        <!-- 🎯 초기 테스트 코드를 "제없알 사랑해요" 딱 한 줄 정식 문법으로 바꿨습니다 -->
         <textarea id="gameInput">고대낚시대 {
-    낙화참 "ㅇㅅㅇ" 간이_공간_텔레포터;
-    낙화참 "ㅇㅅㅇ"
+    낙화참 "제없알 사랑해요";
     제없알_화이팅!
 }</textarea>
 
@@ -69,7 +70,7 @@
                 // 🛠️ 따옴표 오타 교정
                 inputCode = inputCode.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
 
-                // 🛠️ 버그의 주범이었던 기존 보정 로직을 밀어버리고 단순 라인별 처리로 전면 교체
+                // 🛠️ 라인별 처리 변환 방식
                 let lines = inputCode.split('\n');
                 let processedLines = [];
 
@@ -79,10 +80,8 @@
 
                     // 낙화참 구문 분석 및 변환
                     if (trimmed.startsWith("낙화참")) {
-                        // << 기호 유무와 상관없이 문장 안에서 간이_공간_텔레포터 분리 처리
                         let hasTeleporter = trimmed.includes("간이_공간_텔레포터");
                         
-                        // 따옴표 내부의 순수 문자열 추출
                         let contentMatch = trimmed.match(/"([^"\\]*(?:\\.[^"\\]*)*)"/);
                         let content = contentMatch ? `"${contentMatch[1]}"` : '""';
                         
@@ -92,7 +91,6 @@
                             processedLines.push(`print(${content});`);
                         }
                     } 
-                    // 나머지 핵심 단어들 안전하게 일대일 치환
                     else {
                         let l = line;
                         l = l.replace(/고대낚시대\s*\{/g, 'function main() {');
@@ -132,3 +130,4 @@
 
 </body>
 </html>
+
