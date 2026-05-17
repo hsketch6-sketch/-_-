@@ -67,11 +67,15 @@
             outputConsole.textContent = ""; 
             
             try {
-                // 🛠️ 1. 줄바꿈 문법 공백 허용 및 강력 처리
+                // 🛠️ [신규 필터 추가] 모바일 등에서 자동 입력되는 잘못된 둥근 따옴표(“ ”)를 표준 따옴표(")로 자동 변경
+                inputCode = inputCode.replace(/[“”]/g, '"');
+                inputCode = inputCode.replace(/[‘’]/g, "'");
+
+                // 1. 줄바꿈 문법 공백 허용 및 강력 처리
                 inputCode = inputCode.replace(/\s*<<\s*간이_공간_텔레포터/g, ' + "\\n"');
                 inputCode = inputCode.replace(/간이_공간_텔레포터/g, '"\\n"');
                 
-                // 🛠️ 2. 문장 끝 세미콜론 정규식 오타 보정 완벽 수정 완료 (? 기호 정상 적용)
+                // 2. 문장 끝 세미콜론 정규식 자동 보정
                 inputCode = inputCode.replace(/(낙화참\s+["'].*?["'](?:\s*\+\s*"\\n")?)\s*(?=[^;\s\w])/g, '$1;');
                 inputCode = inputCode.replace(/제없알_화이팅!\s*(?=[^;\s\w])/g, '제없알_화이팅!;');
 
@@ -111,4 +115,3 @@
 
 </body>
 </html>
-
