@@ -24,7 +24,7 @@
     <h1>🎮 제없알 화이팅! 전용 프로그래밍 언어</h1>
     <p>나만의 커스텀 게임 언어로 코딩하고, 아래 버튼을 눌러 게임 결과를 바로 확인해 보세요!</p>
 
-    <!-- 📜 원래대로 복구된 명령어 사전 -->
+    <!-- 📜 명령어 사전 -->
     <h3>📜 게임 언어 명령어 사전</h3>
     <table>
         <thead>
@@ -54,7 +54,6 @@
     제없알_화이팅!
 }</textarea>
 
-        <!-- 🎯 요청하신 대로 '주문 실행 (코드 실행하기)'으로 문구를 변경했습니다. -->
         <button onclick="runGameLanguage()">코드 실행하기</button>
 
         <h3 class="console-title">📺 GAME CONSOLE (실행 결과 화면)</h3>
@@ -68,18 +67,18 @@
             outputConsole.textContent = ""; 
             
             try {
-                // 🛠️ 공백 제거 및 엔터 변환 로직
+                // 🛠️ 1. 줄바꿈 문법 공백 허용 및 강력 처리
                 inputCode = inputCode.replace(/\s*<<\s*간이_공간_텔레포터/g, ' + "\\n"');
                 inputCode = inputCode.replace(/간이_공간_텔레포터/g, '"\\n"');
                 
-                // 문장 끝 세미콜론 누락 자동 보정
+                // 🛠️ 2. 문장 끝 세미콜론 정규식 오타 보정 완벽 수정 완료 (? 기호 정상 적용)
                 inputCode = inputCode.replace(/(낙화참\s+["'].*?["'](?:\s*\+\s*"\\n")?)\s*(?=[^;\s\w])/g, '$1;');
                 inputCode = inputCode.replace(/제없알_화이팅!\s*(?=[^;\s\w])/g, '제없알_화이팅!;');
 
-                // 낙화참 변환
+                // 3. 출력문 치환
                 inputCode = inputCode.replace(/낙화참\s+([^;]+);?/g, 'print($1);');
                 
-                // 핵심 단어 변환 규칙
+                // 4. 핵심 명령어 치환 규칙
                 inputCode = inputCode.replace(/고대낚시대\s*\{/g, 'function main() {');
                 inputCode = inputCode.replace(/선사\s+/g, 'let ');
                 inputCode = inputCode.replace(/심연속의_빛/g, 'if');
@@ -112,3 +111,4 @@
 
 </body>
 </html>
+
