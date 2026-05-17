@@ -24,7 +24,6 @@
     <h1>🎮 제없알 화이팅! 전용 프로그래밍 언어</h1>
     <p>나만의 커스텀 게임 언어로 코딩하고, 아래 버튼을 눌러 게임 결과를 바로 확인해 보세요!</p>
 
-    <!-- 📜 명령어 사전 -->
     <h3>📜 게임 언어 명령어 사전</h3>
     <table>
         <thead>
@@ -49,8 +48,8 @@
     <div class="container">
         <h3>1. 게임 스크립트 입력창</h3>
         <textarea id="gameInput">고대낚시대 {
-    낙화참 "제없알 사랑해요" << 간이_공간_텔레포터;
-    낙화참 "인수됬나?";
+    낙화참 "ㅇㅅㅇ" 간이_공간_텔레포터;
+    낙화참 "ㅇㅅㅇ"
     제없알_화이팅!
 }</textarea>
 
@@ -67,35 +66,53 @@
             outputConsole.textContent = ""; 
             
             try {
-                // 🛠️ [신규 필터 추가] 모바일 등에서 자동 입력되는 잘못된 둥근 따옴표(“ ”)를 표준 따옴표(")로 자동 변경
-                inputCode = inputCode.replace(/[“”]/g, '"');
-                inputCode = inputCode.replace(/[‘’]/g, "'");
+                // 🛠️ 따옴표 오타 교정
+                inputCode = inputCode.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
 
-                // 1. 줄바꿈 문법 공백 허용 및 강력 처리
-                inputCode = inputCode.replace(/\s*<<\s*간이_공간_텔레포터/g, ' + "\\n"');
-                inputCode = inputCode.replace(/간이_공간_텔레포터/g, '"\\n"');
-                
-                // 2. 문장 끝 세미콜론 정규식 자동 보정
-                inputCode = inputCode.replace(/(낙화참\s+["'].*?["'](?:\s*\+\s*"\\n")?)\s*(?=[^;\s\w])/g, '$1;');
-                inputCode = inputCode.replace(/제없알_화이팅!\s*(?=[^;\s\w])/g, '제없알_화이팅!;');
+                // 🛠️ 버그의 주범이었던 기존 보정 로직을 밀어버리고 단순 라인별 처리로 전면 교체
+                let lines = inputCode.split('\n');
+                let processedLines = [];
 
-                // 3. 출력문 치환
-                inputCode = inputCode.replace(/낙화참\s+([^;]+);?/g, 'print($1);');
-                
-                // 4. 핵심 명령어 치환 규칙
-                inputCode = inputCode.replace(/고대낚시대\s*\{/g, 'function main() {');
-                inputCode = inputCode.replace(/선사\s+/g, 'let ');
-                inputCode = inputCode.replace(/심연속의_빛/g, 'if');
-                inputCode = inputCode.replace(/심연속의_끝/g, 'else');
-                inputCode = inputCode.replace(/파라다이스_수장/g, 'while');
-                inputCode = inputCode.replace(/제없알_화이팅!/g, 'return;');
+                for (let line of lines) {
+                    let trimmed = line.trim();
+                    if (!trimmed) continue;
+
+                    // 낙화참 구문 분석 및 변환
+                    if (trimmed.startsWith("낙화참")) {
+                        // << 기호 유무와 상관없이 문장 안에서 간이_공간_텔레포터 분리 처리
+                        let hasTeleporter = trimmed.includes("간이_공간_텔레포터");
+                        
+                        // 따옴표 내부의 순수 문자열 추출
+                        let contentMatch = trimmed.match(/"([^"\\]*(?:\\.[^"\\]*)*)"/);
+                        let content = contentMatch ? `"${contentMatch[1]}"` : '""';
+                        
+                        if (hasTeleporter) {
+                            processedLines.push(`print(${content} + "\\n");`);
+                        } else {
+                            processedLines.push(`print(${content});`);
+                        }
+                    } 
+                    // 나머지 핵심 단어들 안전하게 일대일 치환
+                    else {
+                        let l = line;
+                        l = l.replace(/고대낚시대\s*\{/g, 'function main() {');
+                        l = l.replace(/선사\s+/g, 'let ');
+                        l = l.replace(/심연속의_빛/g, 'if');
+                        l = l.replace(/심연속의_끝/g, 'else');
+                        l = l.replace(/파라다이스_수장/g, 'while');
+                        l = l.replace(/제없알_화이팅!/g, 'return;');
+                        processedLines.push(l);
+                    }
+                }
+
+                let finalCode = processedLines.join('\n');
 
                 let consoleBuffer = "";
                 function print(value) {
                     consoleBuffer += value;
                 }
 
-                let executable = new Function('print', inputCode + '\n if(typeof main === "function") main();');
+                let executable = new Function('print', finalCode + '\n if(typeof main === "function") main();');
                 executable(print);
 
                 if (consoleBuffer === "") {
